@@ -2,11 +2,15 @@ use std::io::{self, Write};
 use crate::query::QueryExecutor;
 use anyhow::Result;
 
-pub fn run() -> Result<()> {
-    println!("Welcome to Whitematter CLI");
+pub fn run(query_executor: QueryExecutor) -> Result<()> {
+    println!("Welcome to AI-First DB CLI");
     println!("Enter your queries or type 'exit' to quit");
 
-    let query_executor = create_query_executor()?;
+    let mut user_id = String::new();
+    print!("Enter your user ID: ");
+    io::stdout().flush()?;
+    io::stdin().read_line(&mut user_id)?;
+    let user_id = user_id.trim();
 
     loop {
         print!("> ");
@@ -21,16 +25,12 @@ pub fn run() -> Result<()> {
             break;
         }
 
-        let result = tokio::runtime::Runtime::new()?.block_on(query_executor.execute(input))?;
-        println!("{}", result);
+        match query_executor.execute(input, user_id).await {
+            Ok(result) => println!("Result: {}", result),
+            Err(e) => eprintln!("Error: {}", e),
+        }
     }
 
     println!("Goodbye!");
     Ok(())
-}
-
-fn create_query_executor() -> Result<QueryExecutor> {
-    // Initialize all components and create a QueryExecutor
-    // This is a placeholder and should be implemented with actual component initialization
-    unimplemented!()
 }

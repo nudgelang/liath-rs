@@ -1,5 +1,6 @@
 use tonic::{transport::Server, Request, Response, Status};
 use crate::query::QueryExecutor;
+use std::sync::Arc;
 use anyhow::Result;
 
 pub mod ai_first_db {
@@ -10,7 +11,7 @@ use ai_first_db::database_server::{Database, DatabaseServer};
 use ai_first_db::{QueryRequest, QueryResponse};
 
 pub struct DatabaseService {
-    query_executor: QueryExecutor,
+    query_executor: Arc<QueryExecutor>,
 }
 
 #[tonic::async_trait]
@@ -19,18 +20,17 @@ impl Database for DatabaseService {
         &self,
         request: Request<QueryRequest>,
     ) -> Result<Response<QueryResponse>, Status> {
-        let query = request.into_inner().query;
-        let result = self.query_executor.execute(&query).await
+        let query_request = request.into_inner();
+        let result = self.query_executor.execute(&query_request.query, &query_request.user_id).await
             .map_err(|e| Status::internal(e.to_string()))?;
 
         Ok(Response::new(QueryResponse { result }))
     }
 }
 
-pub async fn run_server(port: u16) -> Result<()> {
+pub async fn run_server(port: u16, query_executor: QueryExecutor) -> Result<()> {
     let addr = format!("[::1]:{}", port).parse()?;
-    let query_executor = create_query_executor()?;
-    let database_service = DatabaseService { query_executor };
+    let database_service = DatabaseService { query_executor: Arc::new(query_executor) };
 
     println!("AI-First DB Server listening on {}", addr);
 
@@ -40,10 +40,4 @@ pub async fn run_server(port: u16) -> Result<()> {
         .await?;
 
     Ok(())
-}
-
-fn create_query_executor() -> Result<QueryExecutor> {
-    // Initialize all components and create a QueryExecutor
-    // This is a placeholder and should be implemented with actual component initialization
-    unimplemented!()
 }

@@ -1,18 +1,24 @@
 use rlua::{Lua, Context, Result};
 use std::sync::Arc;
+use crate::lua::modules::load_all_modules;
 
 pub struct LuaVM {
     lua: Lua,
 }
 
 impl LuaVM {
-    pub fn new() -> Self {
-        Self { lua: Lua::new() }
+    pub fn new() -> Result<Self> {
+        let lua = Lua::new();
+        lua.context(|ctx| {
+            load_all_modules(ctx)?;
+            Ok(())
+        })?;
+        Ok(Self { lua })
     }
 
-    pub fn execute(&self, code: &str) -> Result<()> {
+    pub fn execute(&self, code: &str) -> Result<String> {
         self.lua.context(|ctx| {
-            ctx.load(code).exec()
+            ctx.load(code).eval()
         })
     }
 
