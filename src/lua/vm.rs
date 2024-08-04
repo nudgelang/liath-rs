@@ -1,6 +1,5 @@
 use rlua::{Lua, Context, Result, Value};
 use std::sync::Arc;
-use crate::lua::modules::load_all_modules;
 use crate::lua::luarocks::LuaRocks;
 use std::path::PathBuf;
 
@@ -13,11 +12,6 @@ impl LuaVM {
     pub fn new(luarocks_path: PathBuf) -> Result<Self> {
         let lua = Lua::new();
         let luarocks = Arc::new(LuaRocks::new(luarocks_path));
-
-        lua.context(|ctx| {
-            load_all_modules(ctx)?;
-            Ok(())
-        })?;
 
         Ok(Self { lua, luarocks })
     }
