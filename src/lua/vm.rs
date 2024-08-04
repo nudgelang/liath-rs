@@ -1,4 +1,4 @@
-use rlua::{Lua, Context, Result};
+use rlua::{Lua, Context, Result, Value};
 use std::sync::Arc;
 use crate::lua::modules::load_all_modules;
 use crate::lua::luarocks::LuaRocks;
@@ -22,15 +22,22 @@ impl LuaVM {
         Ok(Self { lua, luarocks })
     }
 
-    pub fn execute(&self, code: &str) -> Result<String> {
+    pub fn execute(&self, code: &str) -> Result<Value> {
         self.lua.context(|ctx| {
             ctx.load(code).eval()
         })
     }
 
+    pub fn execute_with_context<F, R>(&self, f: F) -> Result<R>
+    where
+        F: FnOnce(Context) -> Result<R>,
+    {
+        self.lua.context(f)
+    }
+
     pub fn register_function<F>(&self, name: &str, func: F) -> Result<()>
     where
-        F: 'static + Send + Sync + Fn(Context, rlua::Value) -> Result<rlua::Value>,
+        F: 'static + Send + Sync + Fn(Context, Value) -> Result<Value>,
     {
         self.lua.context(|ctx| {
             let globals = ctx.globals();
