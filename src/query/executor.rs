@@ -8,6 +8,7 @@ use tokio::sync::Semaphore;
 use std::sync::Arc;
 use tracing::{info, error, instrument};
 use rlua::{Lua, Context as LuaContext, Value as LuaValue};
+use candle_core::Device;
 
 pub struct QueryExecutor {
     namespace_manager: Arc<NamespaceManager>,
@@ -53,7 +54,7 @@ impl QueryExecutor {
         Ok(self.format_lua_result(result))
     }
 
-    fn register_db_functions(&self, lua_ctx: LuaContext) -> Result<()> {
+    fn register_db_functions(&self, lua_ctx: LuaContext, user_id: &str) -> Result<()> {
         let namespace_manager = self.namespace_manager.clone();
         let llm = self.llm.clone();
         let embedding = self.embedding.clone();
@@ -83,9 +84,12 @@ impl QueryExecutor {
             Ok(embedding_result)
         })?)?;
 
-        lua_ctx.globals().set("llm_query", lua_ctx.create_function(move |_, prompt: String| {
+        let llm = self.llm.clone();
+        let llm_semaphore = self.llm_semaphore.clone();
+
+        lua_ctx.globals().set("llm_query", lua_ctx.create_function(move |_, (prompt, max_tokens): (String, usize)| {
             let permit = llm_semaphore.try_acquire().context("Failed to acquire LLM semaphore")?;
-            let llm_result = llm.generate(&prompt).context("Failed to generate LLM response")?;
+            let llm_result = tokio::runtime::Runtime::new()?.block_on(llm.generate(&prompt, max_tokens))?;
             drop(permit);
             Ok(llm_result)
         })?)?;

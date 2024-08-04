@@ -17,12 +17,22 @@ use crate::file::FileStorage;
 use crate::query::executor::QueryExecutor;
 use crate::auth::AuthManager;
 use anyhow::Result;
+use candle_core::Device;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
 struct Cli {
     #[command(subcommand)]
     command: Option<Commands>,
+
+    #[arg(long, default_value = "cpu")]
+    device: String,
+
+    #[arg(long)]
+    model_path: String,
+
+    #[arg(long)]
+    tokenizer_path: String,
 }
 
 #[derive(Subcommand)]
@@ -37,26 +47,32 @@ async fn main() -> Result<()> {
 
     let cli = Cli::parse();
 
+    let device = match cli.device.as_str() {
+        "cpu" => Device::Cpu,
+        "cuda" => Device::new_cuda(0)?,
+        _ => anyhow::bail!("Invalid device specified"),
+    };
+
     let namespace_manager = NamespaceManager::new();
-    let llm = LLMWrapper::new("path/to/your/llm/model")?;
+    let llm = LLMWrapper::new(cli.model_path.into(), cli.tokenizer_path.into(), device)?;
     let embedding = EmbeddingWrapper::new(fastembed::EmbeddingModel::AllMiniLML6V2)?;
-    let lua_vm = LuaVM::new()?;
+    let lua_vm = LuaVM::new(std::path::PathBuf::from("path/to/luarocks"))?;
     let file_storage = FileStorage::new("path/to/file/storage")?;
     let mut auth_manager = AuthManager::new();
 
     // Add a default admin user
     auth_manager.add_user("admin", vec![
-        query::parser::QueryType::Select,
-        query::parser::QueryType::Insert,
-        query::parser::QueryType::Update,
-        query::parser::QueryType::Delete,
-        query::parser::QueryType::CreateNamespace,
-        query::parser::QueryType::DeleteNamespace,
-        query::parser::QueryType::UploadFile,
-        query::parser::QueryType::ProcessFile,
-        query::parser::QueryType::GenerateEmbedding,
-        query::parser::QueryType::SimilaritySearch,
-        query::parser::QueryType::LLMQuery,
+        "select".to_string(),
+        "insert".to_string(),
+        "update".to_string(),
+        "delete".to_string(),
+        "create_namespace".to_string(),
+        "delete_namespace".to_string(),
+        "upload_file".to_string(),
+        "process_file".to_string(),
+        "generate_embedding".to_string(),
+        "similarity_search".to_string(),
+        "llm_query".to_string(),
     ]);
 
     let query_executor = QueryExecutor::new(
