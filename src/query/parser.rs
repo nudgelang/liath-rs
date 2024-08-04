@@ -1,6 +1,6 @@
 use anyhow::Result;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum QueryType {
     Select,
     Insert,
@@ -13,6 +13,11 @@ pub enum QueryType {
     GenerateEmbedding,
     SimilaritySearch,
     LLMQuery,
+    Join,
+    Aggregate,
+    InstallPackage,
+    ListPackages,
+    ExecuteLua,
 }
 
 pub struct QueryParser;
@@ -36,6 +41,11 @@ impl QueryParser {
             "generate_embedding" => QueryType::GenerateEmbedding,
             "similarity_search" => QueryType::SimilaritySearch,
             "llm_query" => QueryType::LLMQuery,
+            "join" => QueryType::Join,
+            "aggregate" => QueryType::Aggregate,
+            "install_package" => QueryType::InstallPackage,
+            "list_packages" => QueryType::ListPackages,
+            "execute_lua" => QueryType::ExecuteLua,
             _ => return Err(anyhow::anyhow!("Unknown query type")),
         };
 
