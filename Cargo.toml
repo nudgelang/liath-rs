@@ -1,0 +1,26 @@
+[package]
+name = "whitematter"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rocksdb = "0.20.1"
+usearch = "2.0.1"
+llama_cpp_rs = "0.2.0"
+fastembed = "2.0.0"
+rlua = "0.19.4"
+tokio = { version = "1.28.0", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "1.0"
+anyhow = "1.0"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+clap = { version = "4.3", features = ["derive"] }
+tonic = "0.9"
+prost = "0.11"
+futures = "0.3"
+async-trait = "0.1.68"
+
+[build-dependencies]
+tonic-build = "0.9"
