@@ -18,6 +18,8 @@ use crate::query::executor::QueryExecutor;
 use crate::auth::AuthManager;
 use anyhow::Result;
 use candle_core::Device;
+use crate::server::api::run_server;
+
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -91,8 +93,8 @@ async fn main() -> Result<()> {
             cli::console::run(query_executor)?;
         }
         Some(Commands::Server { port }) => {
-            let port = port.unwrap_or(50051);
-            server::api::run_server(port, query_executor).await?;
+            let port = port.unwrap_or(3000);
+            run_server(port, query_executor).await?;
         }
         None => {
             println!("Please specify a command: cli or server");

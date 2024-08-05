@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package ai_first_db;
+
+service Database {
+  rpc ExecuteQuery (QueryRequest) returns (QueryResponse);
+}
+
+message QueryRequest {
+  string query = 1;
+  string user_id = 2;
+}
+
+message QueryResponse {
+  string result = 1;
+}
