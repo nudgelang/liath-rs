@@ -19,11 +19,6 @@ anyhow = "1.0"
 tracing = "0.1"
 tracing-subscriber = "0.3"
 clap = { version = "4.3", features = ["derive"] }
-tonic = "0.9"
-prost = "0.11"
 futures = "0.3"
 async-trait = "0.1.68"
 hf-hub = "0.3.2"
-
-[build-dependencies]
-tonic-build = "0.9"
