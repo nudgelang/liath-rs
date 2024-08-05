@@ -2,7 +2,7 @@ use std::io::{self, Write};
 use crate::query::QueryExecutor;
 use anyhow::Result;
 
-pub fn run(query_executor: QueryExecutor) -> Result<()> {
+pub async fn run(query_executor: QueryExecutor) -> Result<()> {
     println!("Welcome to AI-First DB CLI");
     println!("Enter your queries or type 'exit' to quit");
 

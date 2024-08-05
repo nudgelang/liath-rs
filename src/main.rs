@@ -90,7 +90,7 @@ async fn main() -> Result<()> {
 
     match &cli.command {
         Some(Commands::Cli) => {
-            cli::console::run(query_executor)?;
+            cli::console::run(query_executor).await?;
         }
         Some(Commands::Server { port }) => {
             let port = port.unwrap_or(3000);

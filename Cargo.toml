@@ -4,10 +4,11 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-rocksdb = "0.20.1"
+rocksdb = { version = "0.20.1", features = ["multi-threaded-cf"] }
 usearch = "2.0.1"
 candle-core = "0.6.0"
 candle-transformers = "0.6.0"
+candle-examples = "0.6.0"
 tokenizers = "0.13.3"
 fastembed = "3"
 rlua = "0.19.4"
@@ -22,3 +23,12 @@ clap = { version = "4.3", features = ["derive"] }
 futures = "0.3"
 async-trait = "0.1.68"
 hf-hub = "0.3.2"
+axum = "0.6.0"
+
+[dependencies.uuid]
+version = "1.10.0"
+features = [
+    "v4",                # Lets you generate random UUIDs
+    "fast-rng",          # Use a faster (but still sufficiently random) RNG
+    "macro-diagnostics", # Enable better diagnostics for compile-time UUIDs
+]
