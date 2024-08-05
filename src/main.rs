@@ -57,7 +57,7 @@ async fn main() -> Result<()> {
 
     let namespace_manager = NamespaceManager::new();
     let llm = LLMWrapper::new(cli.model_path.into(), cli.tokenizer_path.into(), device)?;
-    let embedding = EmbeddingWrapper::new(fastembed::EmbeddingModel::AllMiniLML6V2)?;
+    let embedding = EmbeddingWrapper::new()?;
     let lua_vm = LuaVM::new(std::path::PathBuf::from("path/to/luarocks"))?;
     let file_storage = FileStorage::new("path/to/file/storage")?;
     let mut auth_manager = AuthManager::new();
