@@ -1,53 +1,62 @@
-# Whitematter
+# 🚀 Liath
 
-Whitematter is an AI-first database system that integrates AI capabilities directly into its core functionality. It combines traditional database operations with AI features such as language model inference and vector similarity search, all accessible through a Lua-based query language.
+[![Rust](https://img.shields.io/badge/Rust-1.75+-blue.svg)](https://www.rust-lang.org)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Experimental](https://img.shields.io/badge/status-experimental-orange.svg)](https://github.com/nudgelang/liath)
 
-## Features
+Liath is an experimental high-performance version of [nudgelang/liath](https://github.com/nudgelang/liath). It is an AI-first database system that integrates AI capabilities directly into its core functionality. It combines traditional database operations with AI features such as language model inference and vector similarity search, all accessible through a Lua-based query language.
 
-- RocksDB-based storage for high-performance key-value operations
-- Integrated Language Model (LLM) for text generation and AI-assisted queries
-- Vector database functionality for similarity search
-- Lua-based query language for flexible and powerful data manipulation
-- File storage and processing capabilities
-- Authentication and authorization system
-- Support for transactions and advanced RocksDB features
-- CLI and Server modes for versatile usage
+## ✨ Key Features
 
-## Prerequisites
+- 🔌 **RocksDB Storage**: High-performance key-value operations with multi-threaded column families
+- 🤖 **AI Integration**: 
+  - Integrated Language Model (LLM) inference using Candle
+  - Vector embeddings with FastEmbed
+  - Similarity search powered by USearch
+- 📝 **Lua Query Language**: Flexible and powerful data manipulation through rlua
+- 📁 **File Operations**: Built-in file storage and processing
+- 🔐 **Authentication**: Secure user management system
+- 🌐 **Server & CLI**: 
+  - HTTP API with Axum
+  - Command-line interface
+- ⚡ **Performance**: 
+  - Async runtime with Tokio
+  - Multi-threaded operations
+  - GPU acceleration support (CUDA)
+
+## 🛠️ Prerequisites
 
 - Rust (latest stable version)
 - CUDA toolkit (optional, for GPU acceleration)
 
-## Installation
+## 🚀 Quick Start
 
 1. Clone the repository:
+   ```bash
+   git clone https://github.com/nudgelang/liath-rs.git
+   cd liath-rs
+   ```
 
 2. Build the project:
-   ```
+   ```bash
    cargo build --release
    ```
 
-## Usage
-
-To run the database, you need to provide the paths to a GGUF model file and a tokenizer file. You can download these from the Hugging Face Model Hub.
+## 💻 Usage
 
 ### CLI Mode
 
-```
+```bash
 cargo run --release -- --device cpu --model-path /path/to/model.gguf --tokenizer-path /path/to/tokenizer.json cli
 ```
 
 ### Server Mode
 
-```
+```bash
 cargo run --release -- --device cuda --model-path /path/to/model.gguf --tokenizer-path /path/to/tokenizer.json server
 ```
 
-Replace `cpu` with `cuda` to use GPU acceleration (if available).
-
-## Lua Query Examples
-
-Here are some example queries you can run in the CLI mode:
+## 📝 Lua Query Examples
 
 ```lua
 -- Create a namespace
@@ -66,9 +75,9 @@ local results = similarity_search("users", embedding, 5)
 print(results)
 ```
 
-## Configuration
+## ⚙️ Configuration
 
-You can configure various aspects of the database by modifying the `config.toml` file (create one if it doesn't exist):
+Create a `config.toml` file to customize your setup:
 
 ```toml
 [database]
@@ -84,10 +93,10 @@ max_concurrent = 10
 default_user = "admin"
 ```
 
-## Contributing
+## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## License
+## 📄 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
